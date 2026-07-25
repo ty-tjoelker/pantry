@@ -91,3 +91,7 @@ file. It's the memory that carries between sessions.
 - Single passcode gate instead of real auth in v1. Upgrade path is Supabase Auth magic links.
 - Shared `items` catalog underpins pantry, recipes, and lists so inventory can be cross-checked
   against recipe requirements.
+- **Phase 1 done.** Deployed skeleton live at https://pantry-two-pink.vercel.app/, installed
+  to iOS home screen. Repo: https://github.com/ty-tjoelker/pantry. PWA icons generated with
+  Next's built-in `next/og` (no image library dependency). Next session starts Phase 2
+  (Supabase schema, grocery list + pantry screens).
