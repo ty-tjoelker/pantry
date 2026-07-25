@@ -1,7 +1,9 @@
-export default function RecipesPage() {
-  return (
-    <div className="flex flex-1 flex-col items-center justify-center px-6 text-center text-zinc-400">
-      <p>Recipes coming in a later phase.</p>
-    </div>
-  );
+import { getRecipes } from "@/lib/db/recipes";
+import RecipeList from "@/components/recipe-list";
+
+export const dynamic = "force-dynamic";
+
+export default async function RecipesPage() {
+  const recipes = await getRecipes();
+  return <RecipeList recipes={recipes} />;
 }
