@@ -93,5 +93,18 @@ file. It's the memory that carries between sessions.
   against recipe requirements.
 - **Phase 1 done.** Deployed skeleton live at https://pantry-two-pink.vercel.app/, installed
   to iOS home screen. Repo: https://github.com/ty-tjoelker/pantry. PWA icons generated with
-  Next's built-in `next/og` (no image library dependency). Next session starts Phase 2
-  (Supabase schema, grocery list + pantry screens).
+  Next's built-in `next/og` (no image library dependency).
+- **Phase 2 done.** Grocery list (home) and pantry screens live, backed by Supabase. Bottom
+  nav wires up List/Pantry/Recipes/Plan; Recipes and Plan are placeholders for Phase 3/4.
+  - Supabase project: `pantry` (trveujgkttaijanbqbyc). Schema + RLS policies in `schema.sql`.
+  - Supabase enables Row Level Security by default on new tables now — `items`, `pantry`, and
+    `grocery_list` all need an explicit "allow anon" policy (already in `schema.sql`) or writes
+    silently fail. Worth remembering if a new table gets added later.
+  - Next.js 16 renamed the `middleware.ts` convention to `proxy.ts` (export `proxy`, not
+    `middleware`). The passcode gate lives there.
+  - Env vars in Vercel: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+    `PANTRY_PASSCODE` (value is in `.env.local` and in the Vercel dashboard, not written here
+    since this file is committed to the repo).
+  - Shared passcode (not per-user auth) means adding a second person (e.g. Ty's wife) is just
+    entering the same passcode on her phone — same shared data, no schema change needed.
+  - Next session starts Phase 3 (recipe library).
