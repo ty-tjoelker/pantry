@@ -116,4 +116,21 @@ file. It's the memory that carries between sessions.
     correctly, then cleaned up the test data through the app's own UI.
   - The `items` catalog picked up 5 generic entries (spaghetti, olive oil, garlic, crushed
     tomatoes, red pepper flakes) from parser testing — Ty said to keep them.
-  - Next session starts Phase 4 (meal plan → automatic grocery list).
+- **Phase 4 done.** Week view (Sunday–Saturday) at `/plan`: tap a slot to assign a recipe
+  (searchable) or type a free-text note like "leftovers". "Build my list" combines every
+  ingredient across the week's planned recipes, subtracts the pantry, adds missing staples,
+  and shows a checkbox review screen before writing anything — nothing is added to the
+  grocery list without that confirmation. Added items get `source = 'meal_plan'`.
+  - `meal_plan` table added to `schema.sql` (unique per date+meal, same anon-RLS pattern).
+    `recipe_id` is `on delete set null`, so deleting a recipe clears it from any planned
+    slots instead of failing.
+  - Unit combining/conversion is hand-rolled in `lib/units.ts` (`lib/meal-plan-grocery.ts`
+    for the combine logic) — covers common volume (tsp/tbsp/cup/ml/l) and weight
+    (g/kg/oz/lb) units only. Anything else lists separately rather than guessing.
+  - No per-slot serving-count override yet — planning the same recipe twice in a week just
+    doubles its ingredients. Worth adding if it turns out to matter in practice.
+  - Verified live: created a real recipe, planned it into the week, confirmed "Build my
+    list" showed the right combined quantities, added them to the grocery list, then
+    cleaned up all test data (recipe, meal plan slot, grocery entries) through the app's
+    own UI.
+  - Next session starts Phase 5 (polish: dark mode, loading states, offline read, a11y).

@@ -81,3 +81,22 @@ alter table recipe_ingredients enable row level security;
 
 create policy "anon full access" on recipes for all to anon using (true) with check (true);
 create policy "anon full access" on recipe_ingredients for all to anon using (true) with check (true);
+
+-- Pantry — Phase 4 schema
+-- Run this once in the Supabase SQL editor (SQL Editor > New query > paste > Run).
+
+create table meal_plan (
+  id uuid primary key default gen_random_uuid(),
+  date date not null,
+  meal text not null check (meal in ('breakfast', 'lunch', 'dinner')),
+  recipe_id uuid references recipes (id) on delete set null,
+  note text,
+  created_at timestamptz not null default now(),
+  unique (date, meal)
+);
+
+create index meal_plan_date_idx on meal_plan (date);
+
+alter table meal_plan enable row level security;
+
+create policy "anon full access" on meal_plan for all to anon using (true) with check (true);

@@ -19,6 +19,21 @@ export async function getRecipes(): Promise<Recipe[]> {
   return data as Recipe[];
 }
 
+export async function searchRecipes(query: string): Promise<Recipe[]> {
+  const trimmed = query.trim();
+  if (!trimmed) return [];
+
+  const { data, error } = await supabase
+    .from("recipes")
+    .select("*")
+    .ilike("title", `%${trimmed}%`)
+    .order("title", { ascending: true })
+    .limit(8);
+
+  if (error) throw new Error(error.message);
+  return data as Recipe[];
+}
+
 export async function getRecipe(id: string): Promise<RecipeWithIngredients> {
   const { data: recipe, error: recipeError } = await supabase
     .from("recipes")

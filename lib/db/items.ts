@@ -16,6 +16,17 @@ export async function searchItems(query: string): Promise<Item[]> {
   return data as Item[];
 }
 
+export async function getStapleItems(): Promise<Item[]> {
+  const { data, error } = await supabase
+    .from("items")
+    .select("*")
+    .eq("is_staple", true)
+    .order("name", { ascending: true });
+
+  if (error) throw new Error(error.message);
+  return data as Item[];
+}
+
 export async function findOrCreateItem(name: string): Promise<Item> {
   const trimmed = name.trim();
 

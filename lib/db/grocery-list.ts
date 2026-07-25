@@ -2,6 +2,7 @@ import { supabase } from "./client";
 import { findOrCreateItem } from "./items";
 import { addToPantry } from "./pantry";
 import type { GroceryListEntryWithItem } from "@/types/grocery-list";
+import type { GroceryPreviewRow } from "../meal-plan-grocery";
 
 export async function getGroceryList(): Promise<GroceryListEntryWithItem[]> {
   const { data, error } = await supabase
@@ -42,6 +43,41 @@ export async function addGroceryItemByItemId(
 
   if (error) throw new Error(error.message);
   return data as unknown as GroceryListEntryWithItem;
+}
+
+export async function addMealPlanRowsToGroceryList(rows: GroceryPreviewRow[]): Promise<void> {
+  for (const row of rows) {
+    await addMealPlanRow(row);
+  }
+}
+
+async function addMealPlanRow(row: GroceryPreviewRow) {
+  const { data: existing, error: findError } = await supabase
+    .from("grocery_list")
+    .select("*")
+    .eq("item_id", row.itemId)
+    .eq("checked", false)
+    .maybeSingle();
+
+  if (findError) throw new Error(findError.message);
+
+  if (existing) {
+    if (row.quantity === null || existing.unit !== row.unit) return;
+    const { error } = await supabase
+      .from("grocery_list")
+      .update({ quantity: existing.quantity + row.quantity })
+      .eq("id", existing.id);
+    if (error) throw new Error(error.message);
+    return;
+  }
+
+  const { error } = await supabase.from("grocery_list").insert({
+    item_id: row.itemId,
+    quantity: row.quantity ?? 1,
+    unit: row.unit,
+    source: "meal_plan",
+  });
+  if (error) throw new Error(error.message);
 }
 
 export async function setGroceryItemChecked(id: string, checked: boolean) {
