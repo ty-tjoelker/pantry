@@ -107,4 +107,13 @@ file. It's the memory that carries between sessions.
     since this file is committed to the repo).
   - Shared passcode (not per-user auth) means adding a second person (e.g. Ty's wife) is just
     entering the same passcode on her phone — same shared data, no schema change needed.
-  - Next session starts Phase 3 (recipe library).
+- **Phase 3 done.** Recipe library live: searchable/tag-filterable list, detail screen with
+  per-ingredient pantry status and "Cooked it"/"Add missing to grocery list" actions, add/edit
+  form with ingredient autocomplete, and a hand-rolled paste-a-recipe parser (no external API).
+  - `recipes` and `recipe_ingredients` tables added to `schema.sql`, same anon-RLS pattern.
+  - Verified live: added a real recipe end-to-end (autocomplete ingredients, save, view detail,
+    add missing to grocery list, delete), confirmed the grocery list and recipe both reflected
+    correctly, then cleaned up the test data through the app's own UI.
+  - The `items` catalog picked up 5 generic entries (spaghetti, olive oil, garlic, crushed
+    tomatoes, red pepper flakes) from parser testing — Ty said to keep them.
+  - Next session starts Phase 4 (meal plan → automatic grocery list).
