@@ -207,7 +207,11 @@ export default function RecipeForm({
           ))}
         </div>
         <div className="mt-2">
-          <AddItemInput onAddByName={addIngredientByName} onAddItem={addIngredientByItem} />
+          <AddItemInput
+            onAddByName={addIngredientByName}
+            onAddItem={addIngredientByItem}
+            showAddButton
+          />
         </div>
       </div>
 

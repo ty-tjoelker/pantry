@@ -223,6 +223,21 @@ file. It's the memory that carries between sessions.
     `npm run lint` clean. All test data (grocery items, a test recipe, a pantry item)
     removed afterward — some via direct delete since swipe-to-delete has no non-gesture
     path (pre-existing a11y gap, noted in Phase 5, not addressed here).
+  - **Follow-up fixes from real usage, same phase:**
+    - Bottom nav was still hard to hit on notched iPhones after the earlier tap-target
+      bump — root cause was `app/layout.tsx`'s viewport meta missing `viewport-fit: cover`,
+      so `env(safe-area-inset-bottom)` was resolving to `0` everywhere; the padding was
+      correct, it just had nothing to read. Fixed by adding `viewportFit: "cover"` to the
+      `Viewport` export and making `(app)/layout.tsx`'s `<main>` bottom padding
+      safe-area-aware too (`pb-[calc(4rem+env(safe-area-inset-bottom))]`), so content isn't
+      hidden behind the now-taller nav.
+    - Recipe ingredients only had Enter/keyboard-submit as a way to add — `AddItemInput`
+      gained an optional `showAddButton` prop (a visible "+" next to the input, `type="submit"`
+      so it reuses the same submit path) and it's enabled just for the recipe-ingredient
+      usage; grocery/pantry keep their existing full-width look.
+    - Pantry items had no way to be removed at all, ever. `PantryRow` now wraps in the same
+      `SwipeToDelete` component grocery rows already use, plus `deleteFromPantry()` in
+      `lib/db/pantry.ts`. Still gesture-only, same known a11y gap as the grocery list.
   - **Phase 7 (deferred, not built):** AI-generated recipe suggestions and an AI fallback
     for recipe-URL pages without structured data. Needs Ty to set up a separate Anthropic
     developer account (console.anthropic.com, its own billing — distinct from Claude Pro)

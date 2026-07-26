@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import AddItemInput from "./add-item-input";
 import PantryRow from "./pantry-row";
 import { useToast } from "./toast";
-import { addToPantry, adjustPantryQuantity, getPantry } from "@/lib/db/pantry";
+import { addToPantry, adjustPantryQuantity, deleteFromPantry, getPantry } from "@/lib/db/pantry";
 import { addGroceryItemByItemId } from "@/lib/db/grocery-list";
 import { findOrCreateItem, updateItemDietaryTags } from "@/lib/db/items";
 import type { DietaryRestriction } from "@/types/dietary-restriction";
@@ -71,6 +71,16 @@ export default function PantryList({
     }
   }
 
+  async function handleDelete(entry: PantryEntryWithItem) {
+    setEntries((prev) => prev.filter((e) => e.id !== entry.id));
+    showToast("Removed from pantry");
+    try {
+      await deleteFromPantry(entry.id);
+    } catch {
+      await refresh();
+    }
+  }
+
   async function handleAddToGroceryList(entry: PantryEntryWithItem) {
     showToast("Added to list");
     try {
@@ -117,6 +127,7 @@ export default function PantryList({
                     onAdjust={(delta) => handleAdjust(entry, delta)}
                     onAddToGroceryList={() => handleAddToGroceryList(entry)}
                     onToggleDietaryTag={(tag) => handleToggleDietaryTag(entry, tag)}
+                    onDelete={() => handleDelete(entry)}
                   />
                 ))}
               </div>

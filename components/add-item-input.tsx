@@ -7,9 +7,11 @@ import type { Item } from "@/types/item";
 export default function AddItemInput({
   onAddByName,
   onAddItem,
+  showAddButton = false,
 }: {
   onAddByName: (name: string) => void;
   onAddItem: (item: Item) => void;
+  showAddButton?: boolean;
 }) {
   const [value, setValue] = useState("");
   const [suggestions, setSuggestions] = useState<Item[]>([]);
@@ -47,14 +49,24 @@ export default function AddItemInput({
           e.preventDefault();
           submit();
         }}
+        className="flex gap-2"
       >
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
           enterKeyHint="done"
           placeholder="Add an item..."
-          className="w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-base outline-none focus:border-emerald-600 dark:border-zinc-700"
+          className="min-w-0 flex-1 rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-base outline-none focus:border-emerald-600 dark:border-zinc-700"
         />
+        {showAddButton && (
+          <button
+            type="submit"
+            aria-label="Add ingredient"
+            className="flex h-[3.25rem] w-[3.25rem] shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-2xl leading-none text-white active:bg-emerald-700"
+          >
+            +
+          </button>
+        )}
       </form>
       {suggestions.length > 0 && (
         <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl border border-zinc-300 bg-[var(--background)] shadow-lg dark:border-zinc-700">

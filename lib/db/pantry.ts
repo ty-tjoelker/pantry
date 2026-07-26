@@ -41,6 +41,11 @@ export async function addToPantry(
   if (error) throw new Error(error.message);
 }
 
+export async function deleteFromPantry(id: string): Promise<void> {
+  const { error } = await supabase.from("pantry").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 export async function adjustPantryQuantity(id: string, delta: number) {
   const { data: existing, error: findError } = await supabase
     .from("pantry")
