@@ -98,8 +98,7 @@ export default function RecipeForm({
     patch({ ingredients: draft.ingredients.filter((i) => i.tempId !== tempId) });
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit() {
     if (!draft.title.trim()) {
       setError("Give it a title.");
       return;
@@ -143,7 +142,7 @@ export default function RecipeForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+    <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
       <input
         value={draft.title}
         onChange={(e) => patch({ title: e.target.value })}
@@ -235,12 +234,13 @@ export default function RecipeForm({
       {error && <p className="text-sm text-red-500">{error}</p>}
 
       <button
-        type="submit"
+        type="button"
+        onClick={handleSubmit}
         disabled={saving}
         className="w-full rounded-xl bg-emerald-600 py-3 text-sm font-medium text-white active:bg-emerald-700 disabled:opacity-50"
       >
         {saving ? "Saving..." : recipeId ? "Save changes" : "Save recipe"}
       </button>
-    </form>
+    </div>
   );
 }
