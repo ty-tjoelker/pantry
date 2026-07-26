@@ -169,3 +169,63 @@ file. It's the memory that carries between sessions.
     skeletons, the offline fallback (server killed mid-session, cached page still loaded),
     focus states, and check-off (including the aria-pressed toggle) in the browser, then
     removed all test data through the app's own UI.
+- **Phase 6 done.** Household dietary restrictions, recipe substitutes, a rules-based
+  "what should we cook" suggestion engine, recipe-URL import, and a batch of UX fixes Ty
+  ran into using the app day to day.
+  - `items.dietary_tags text[]`, `recipe_ingredients.substitute_note text`, and a new
+    `dietary_restrictions` table (tag + `exclude`/`limit` mode) added to `schema.sql`,
+    seeded with the household's actual restrictions (gluten/dairy/peanut/shrimp/chicken/
+    black+pinto beans excluded, cinnamon limited). Manage the list at `/settings`, linked
+    from a small gear icon on the List screen — not a 5th bottom-nav tab, to keep the
+    thumb-first nav uncluttered.
+  - Category and dietary tags are auto-guessed by keyword match on item creation
+    (`lib/item-heuristics.ts`, wired into `findOrCreateItem`) and overridable per item via
+    a pencil icon on the pantry row that expands inline into toggle chips. Category has no
+    manual override yet — lower stakes than allergy safety, revisit if it turns out to
+    matter.
+  - Key design call: **a recipe is excluded from suggestions only when a conflicting
+    ingredient has no noted substitute.** `recipe-form.tsx` shows an inline "Substitute?"
+    field the moment a conflicting ingredient is added (autocomplete-picked, so its
+    dietary tags are already known); free-typed ingredients don't get resolved until the
+    recipe is next edited, so the prompt appears then instead — an accepted v1 gap.
+    Recipes stay fully visible in normal search/browsing either way (with a warning badge
+    or the substitute note shown inline); exclusion only applies to suggestions.
+  - Suggestion scoring (`lib/suggest-recipes.ts`, pure function, same shape as
+    `lib/meal-plan-grocery.ts`): favors recipes not cooked recently, penalizes tag overlap
+    with the last two weeks of planned meals (variety), rewards pantry match, and applies
+    a small penalty (not exclusion) for `limit`-mode restrictions. Surfaces both above the
+    search box when assigning a meal-plan slot and via a "Surprise me" button on Recipes.
+  - Recipe URL import (`app/api/import-recipe/route.ts` + `lib/parse-recipe-url.ts`):
+    server-side fetch avoids CORS, parses schema.org JSON-LD if the page embeds it, and
+    reuses the existing `parseIngredientLine` parser rather than reimplementing ingredient
+    parsing. No AI involved — sites without structured recipe data fall back to a message
+    pointing at the paste option.
+  - Fixed two real bugs Ty found: the add-item input's bare `onKeyDown` handler meant the
+    iOS keyboard's checkmark did nothing (only the physical Enter key worked) — wrapped it
+    in a real `<form>` so both trigger submission. This briefly created an invalid nested
+    `<form>` where `AddItemInput` is used inside `RecipeForm`'s own form — caught via a
+    hydration warning in the dev console, fixed by making `RecipeForm`'s outer element a
+    `<div>` with an explicit save button instead of relying on submission. Also fixed
+    pantry "+List" silently no-op'ing when the item was already on the list — it now bumps
+    quantity (`addGroceryItemByItemId` takes an optional `incrementBy`).
+  - Added a small toast/haptic feedback component (`components/toast.tsx`) for actions
+    that had no prior confirmation (add item, +List, move to pantry, recipe import), a
+    manual "add straight to pantry" flow, bigger bottom-nav tap targets, and clearer
+    "Checked off" labeling (was "Got it") with a chevron instead of plain +/−.
+  - No AI/LLM calls anywhere in this phase — deliberately deferred (see below).
+  - Verified live end-to-end in the browser, including direct Supabase queries to confirm
+    values that don't surface in the UI: a new item auto-categorized into the correct
+    grocery-store section and got the right auto-guessed dietary tags; a manual tag toggle
+    on a pantry item persisted; pantry "+List" bumped quantity on a second tap; a recipe
+    built with a conflicting ingredient (chicken) showed the substitute prompt while
+    editing, was excluded from both suggestion surfaces with no substitute noted, and
+    started appearing (with the swap surfaced) once one was added; `npm run build` and
+    `npm run lint` clean. All test data (grocery items, a test recipe, a pantry item)
+    removed afterward — some via direct delete since swipe-to-delete has no non-gesture
+    path (pre-existing a11y gap, noted in Phase 5, not addressed here).
+  - **Phase 7 (deferred, not built):** AI-generated recipe suggestions and an AI fallback
+    for recipe-URL pages without structured data. Needs Ty to set up a separate Anthropic
+    developer account (console.anthropic.com, its own billing — distinct from Claude Pro)
+    and add an `ANTHROPIC_API_KEY`. Real cost at this app's volume would be fractions of a
+    cent per call, but the account setup is a real prerequisite, so this waits until Ty
+    explicitly wants to do it.
