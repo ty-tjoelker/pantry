@@ -1,6 +1,7 @@
 "use client";
 
 import SwipeToDelete from "./swipe-to-delete";
+import { vibrate } from "@/lib/haptics";
 import type { GroceryListEntryWithItem } from "@/types/grocery-list";
 
 export default function GroceryRow({
@@ -12,11 +13,17 @@ export default function GroceryRow({
   onToggle: () => void;
   onDelete: () => void;
 }) {
+  function handleToggle() {
+    if (!entry.checked) vibrate();
+    onToggle();
+  }
+
   return (
     <SwipeToDelete onDelete={onDelete}>
       <button
         type="button"
-        onClick={onToggle}
+        onClick={handleToggle}
+        aria-pressed={entry.checked}
         className="flex w-full items-center gap-3 px-4 py-3 text-left"
       >
         <span
@@ -33,7 +40,7 @@ export default function GroceryRow({
           )}
         </span>
         <span className="flex-1">
-          <span className={entry.checked ? "text-zinc-400 line-through" : ""}>
+          <span className={entry.checked ? "text-zinc-500 line-through dark:text-zinc-400" : ""}>
             {entry.item.name}
           </span>
           {(entry.quantity !== 1 || entry.unit) && (

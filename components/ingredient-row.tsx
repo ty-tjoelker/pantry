@@ -25,7 +25,7 @@ export default function IngredientRow({
         <button
           type="button"
           onClick={onRemove}
-          className="text-sm text-zinc-400"
+          className="text-sm text-zinc-500 dark:text-zinc-400"
           aria-label={`Remove ${ingredient.name}`}
         >
           ✕

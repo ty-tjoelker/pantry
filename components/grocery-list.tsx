@@ -133,11 +133,11 @@ export default function GroceryList({
       </div>
       <div className="flex-1 overflow-y-auto pb-6">
         {grouped.length === 0 && checked.length === 0 && (
-          <p className="mt-12 text-center text-zinc-400">Your list is empty.</p>
+          <p className="mt-12 text-center text-zinc-500 dark:text-zinc-400">Your list is empty.</p>
         )}
         {grouped.map(([category, items]) => (
           <div key={category} className="mt-4">
-            <h2 className="px-4 pb-1 text-xs font-medium uppercase tracking-wide text-zinc-400">
+            <h2 className="px-4 pb-1 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
               {category}
             </h2>
             <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
@@ -157,6 +157,7 @@ export default function GroceryList({
             <button
               type="button"
               onClick={() => setGotItOpen((v) => !v)}
+              aria-expanded={gotItOpen}
               className="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-zinc-500"
             >
               <span>Got it ({checked.length})</span>

@@ -178,7 +178,7 @@ export default function RecipeForm({
       />
 
       <div>
-        <h2 className="mb-2 text-sm font-medium uppercase tracking-wide text-zinc-400">
+        <h2 className="mb-2 text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
           Ingredients
         </h2>
         <div className="space-y-2">
@@ -197,7 +197,7 @@ export default function RecipeForm({
       </div>
 
       <div>
-        <h2 className="mb-2 text-sm font-medium uppercase tracking-wide text-zinc-400">
+        <h2 className="mb-2 text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
           Instructions
         </h2>
         <textarea

@@ -31,7 +31,7 @@ export default function SwipeToDelete({
 
   return (
     <div className="relative overflow-hidden">
-      <div className="absolute inset-y-0 right-0 flex w-24 items-center justify-center bg-red-500 text-sm font-medium text-white">
+      <div className="absolute inset-y-0 right-0 flex w-24 items-center justify-center bg-red-600 text-sm font-medium text-white">
         Delete
       </div>
       <div

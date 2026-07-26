@@ -76,10 +76,14 @@ export default function MealSlotEditor({
         <button type="button" onClick={saveNoteAndClose} className="font-medium text-emerald-600">
           Save
         </button>
-        <button type="button" onClick={onClear} className="text-zinc-400">
+        <button type="button" onClick={onClear} className="text-zinc-500 dark:text-zinc-400">
           Clear
         </button>
-        <button type="button" onClick={onClose} className="ml-auto text-zinc-400">
+        <button
+          type="button"
+          onClick={onClose}
+          className="ml-auto text-zinc-500 dark:text-zinc-400"
+        >
           Cancel
         </button>
       </div>

@@ -54,20 +54,24 @@ export default function GroceryPreview({
     <div className="fixed inset-0 z-20 flex flex-col bg-[var(--background)]">
       <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
         <h2 className="text-base font-semibold">This week&rsquo;s list</h2>
-        <button type="button" onClick={onClose} className="text-sm text-zinc-400">
+        <button type="button" onClick={onClose} className="text-sm text-zinc-500 dark:text-zinc-400">
           Close
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-3">
-        {loading && <p className="mt-8 text-center text-zinc-400">Working it out...</p>}
+        {loading && (
+          <p className="mt-8 text-center text-zinc-500 dark:text-zinc-400">Working it out...</p>
+        )}
 
         {!loading && added && (
-          <p className="mt-8 text-center text-zinc-400">Added to your grocery list.</p>
+          <p className="mt-8 text-center text-zinc-500 dark:text-zinc-400">
+            Added to your grocery list.
+          </p>
         )}
 
         {!loading && !added && rows.length === 0 && (
-          <p className="mt-8 text-center text-zinc-400">
+          <p className="mt-8 text-center text-zinc-500 dark:text-zinc-400">
             Nothing needed — plan some recipes, or your pantry already has it covered.
           </p>
         )}
@@ -88,7 +92,7 @@ export default function GroceryPreview({
                   {row.itemName}
                 </span>
                 {row.reason === "staple" && (
-                  <span className="shrink-0 text-xs text-zinc-400">staple</span>
+                  <span className="shrink-0 text-xs text-zinc-500 dark:text-zinc-400">staple</span>
                 )}
               </li>
             ))}

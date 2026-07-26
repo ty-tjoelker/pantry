@@ -10,7 +10,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
       className="block rounded-xl border border-zinc-200 p-4 active:bg-zinc-50 dark:border-zinc-800 dark:active:bg-zinc-900"
     >
       <p className="font-medium">{recipe.title}</p>
-      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-400">
+      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
         {totalMinutes > 0 && <span>{totalMinutes} min</span>}
         {recipe.servings && <span>{recipe.servings} servings</span>}
         {recipe.times_cooked > 0 && <span>Cooked {recipe.times_cooked}×</span>}

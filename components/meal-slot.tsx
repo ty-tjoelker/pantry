@@ -39,7 +39,7 @@ export default function MealSlot({
       className={`w-full rounded-xl border px-2.5 py-2 text-left text-sm ${
         label
           ? "border-zinc-300 dark:border-zinc-700"
-          : "border-dashed border-zinc-300 text-zinc-400 dark:border-zinc-700"
+          : "border-dashed border-zinc-300 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400"
       }`}
     >
       {label ?? "+ Add"}

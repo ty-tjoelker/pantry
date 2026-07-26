@@ -134,3 +134,38 @@ file. It's the memory that carries between sessions.
     cleaned up all test data (recipe, meal plan slot, grocery entries) through the app's
     own UI.
   - Next session starts Phase 5 (polish: dark mode, loading states, offline read, a11y).
+- **Phase 5 done.** Polish pass across the whole app.
+  - Dark mode was already mostly wired up from earlier phases (Tailwind `dark:` variant
+    follows system setting, no toggle needed). This phase fixed the remaining gaps: several
+    muted-gray labels used the same `text-zinc-400` in both themes, which is under WCAG AA
+    contrast on a light background — now `text-zinc-500 dark:text-zinc-400` everywhere.
+  - Added `loading.tsx` skeletons for List/Pantry/Recipes/Recipe detail/Recipe edit/Plan,
+    using a small shared `components/skeleton.tsx`. A global CSS rule (`app/globals.css`)
+    gives buttons/links/inputs a gentle 150ms color transition instead of touching every
+    component individually; respects `prefers-reduced-motion`.
+  - Optimistic updates were already in place for the frequent-tap paths (check off, add
+    item, pantry +/-, meal slot pick) from earlier phases. Multi-field saves (recipe form,
+    "Cooked it", "Add missing ingredients") intentionally still show a brief "Saving..."
+    state rather than being forced optimistic — safer for writes that touch several rows.
+  - Offline read: a hand-rolled service worker (`public/sw.js`, ~30 lines, no library) does
+    runtime caching — network-first, falls back to the last cached response when a fetch
+    fails. No precache list, so it doesn't need to track Next's hashed build filenames.
+    Registered only in production (`components/register-service-worker.tsx` no-ops in dev
+    to avoid stale-cache confusion while running `npm run dev`). An `OfflineBanner` shows
+    when `navigator.onLine` goes false. Verified by killing the local prod server outright
+    and reloading — the grocery/pantry pages still rendered with real cached data.
+  - Haptics: `navigator.vibrate(10)` on grocery check-off (`lib/haptics.ts`, feature-detected).
+    Safari has never implemented the Vibration API, so this is a no-op on Ty's iPhone —
+    added anyway since it's free and correct if the app is ever used on Android.
+  - Accessibility: added `aria-pressed`/`aria-expanded` to toggle-style buttons (check-off
+    rows, tag filters, the grocery list's collapsed "Got it" section), `aria-label` on
+    icon-only buttons (pantry +/-, week prev/next). Confirmed every `outline-none` input is
+    paired with a visible `focus:` state. Known gap, not fixed this phase: swipe-to-delete
+    is touch-gesture-only with no keyboard/screen-reader path.
+  - Added a `pantry-prod` entry to `.claude/launch.json` (runs `npm run build && npm run
+    start`) — needed to actually test the service worker and loading skeletons, since both
+    are dev-mode no-ops.
+  - Verified live: `npm run build` and `npm run lint` clean; exercised dark mode, loading
+    skeletons, the offline fallback (server killed mid-session, cached page still loaded),
+    focus states, and check-off (including the aria-pressed toggle) in the browser, then
+    removed all test data through the app's own UI.

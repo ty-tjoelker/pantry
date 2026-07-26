@@ -30,7 +30,7 @@ export default function PantryRow({
           {entry.item.name}
         </p>
         {entry.expires_on && (
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
             Expires {new Date(entry.expires_on).toLocaleDateString()}
           </p>
         )}
@@ -39,6 +39,7 @@ export default function PantryRow({
         <button
           type="button"
           onClick={() => onAdjust(-1)}
+          aria-label={`Decrease ${entry.item.name} quantity`}
           className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-300 text-lg dark:border-zinc-700"
         >
           −
@@ -47,6 +48,7 @@ export default function PantryRow({
         <button
           type="button"
           onClick={() => onAdjust(1)}
+          aria-label={`Increase ${entry.item.name} quantity`}
           className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-300 text-lg dark:border-zinc-700"
         >
           +
@@ -55,6 +57,7 @@ export default function PantryRow({
       <button
         type="button"
         onClick={onAddToGroceryList}
+        aria-label={`Add ${entry.item.name} to grocery list`}
         className="text-sm font-medium text-emerald-600"
       >
         + List

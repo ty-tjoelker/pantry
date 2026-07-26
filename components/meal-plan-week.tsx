@@ -77,7 +77,7 @@ export default function MealPlanWeek({
         <button
           type="button"
           onClick={() => router.push(`/plan?week=${addDays(weekStart, -7)}`)}
-          className="px-2 py-1 text-lg text-zinc-400"
+          className="px-2 py-1 text-lg text-zinc-500 dark:text-zinc-400"
           aria-label="Previous week"
         >
           ←
@@ -86,7 +86,7 @@ export default function MealPlanWeek({
         <button
           type="button"
           onClick={() => router.push(`/plan?week=${addDays(weekStart, 7)}`)}
-          className="px-2 py-1 text-lg text-zinc-400"
+          className="px-2 py-1 text-lg text-zinc-500 dark:text-zinc-400"
           aria-label="Next week"
         >
           →
@@ -96,13 +96,13 @@ export default function MealPlanWeek({
       <div className="mt-4 space-y-4">
         {days.map((date) => (
           <div key={date}>
-            <h2 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-zinc-400">
+            <h2 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
               {formatDayLabel(date)}
             </h2>
             <div className="space-y-1.5">
               {MEALS.map((meal) => (
                 <div key={meal} className="flex items-center gap-2">
-                  <span className="w-16 shrink-0 text-xs text-zinc-400">{MEAL_LABELS[meal]}</span>
+                  <span className="w-16 shrink-0 text-xs text-zinc-500 dark:text-zinc-400">{MEAL_LABELS[meal]}</span>
                   <div className="flex-1">
                     <MealSlot
                       entry={findEntry(date, meal)}

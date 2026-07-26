@@ -44,12 +44,12 @@ export default function PantryList({
   return (
     <div className="flex-1 overflow-y-auto pb-6">
       {entries.length === 0 && (
-        <p className="mt-12 text-center text-zinc-400">Your pantry is empty.</p>
+        <p className="mt-12 text-center text-zinc-500 dark:text-zinc-400">Your pantry is empty.</p>
       )}
       {sections.map((section) =>
         section.items.length === 0 ? null : (
           <div key={section.key} className="mt-4">
-            <h2 className="px-4 pb-1 text-xs font-medium uppercase tracking-wide text-zinc-400">
+            <h2 className="px-4 pb-1 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
               {section.label}
             </h2>
             <div className="divide-y divide-zinc-200 dark:divide-zinc-800">

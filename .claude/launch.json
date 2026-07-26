@@ -6,6 +6,12 @@
       "runtimeExecutable": "/bin/zsh",
       "runtimeArgs": ["-ic", "npm run dev"],
       "port": 3000
+    },
+    {
+      "name": "pantry-prod",
+      "runtimeExecutable": "/bin/zsh",
+      "runtimeArgs": ["-ic", "npm run build && npm run start"],
+      "port": 3000
     }
   ]
 }

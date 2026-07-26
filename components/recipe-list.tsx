@@ -46,6 +46,7 @@ export default function RecipeList({ recipes }: { recipes: Recipe[] }) {
           <button
             type="button"
             onClick={() => setActiveTag(null)}
+            aria-pressed={activeTag === null}
             className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
               activeTag === null
                 ? "bg-emerald-600 text-white"
@@ -59,6 +60,7 @@ export default function RecipeList({ recipes }: { recipes: Recipe[] }) {
               key={tag}
               type="button"
               onClick={() => setActiveTag(tag === activeTag ? null : tag)}
+              aria-pressed={activeTag === tag}
               className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
                 activeTag === tag
                   ? "bg-emerald-600 text-white"
@@ -73,7 +75,7 @@ export default function RecipeList({ recipes }: { recipes: Recipe[] }) {
 
       <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
         {filtered.length === 0 && (
-          <p className="mt-8 text-center text-zinc-400">
+          <p className="mt-8 text-center text-zinc-500 dark:text-zinc-400">
             {recipes.length === 0 ? "No recipes yet." : "Nothing matches."}
           </p>
         )}

@@ -67,7 +67,7 @@ export default function RecipeDetail({
         <p className="mt-1 text-sm text-zinc-500">{recipe.description}</p>
       )}
 
-      <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-zinc-400">
+      <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
         {totalMinutes > 0 && <span>{totalMinutes} min</span>}
         {recipe.servings && <span>{recipe.servings} servings</span>}
         {recipe.times_cooked > 0 && <span>Cooked {recipe.times_cooked}×</span>}
@@ -86,7 +86,7 @@ export default function RecipeDetail({
         </div>
       )}
 
-      <h2 className="mt-6 text-sm font-medium uppercase tracking-wide text-zinc-400">
+      <h2 className="mt-6 text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
         Ingredients
       </h2>
       <ul className="mt-2 divide-y divide-zinc-200 dark:divide-zinc-800">
@@ -95,11 +95,13 @@ export default function RecipeDetail({
           return (
             <li key={ingredient.id} className="flex items-center gap-2 py-2 text-sm">
               <span className={`h-2 w-2 shrink-0 rounded-full ${have ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-700"}`} />
-              <span className={have ? "text-zinc-400 line-through" : ""}>
+              <span className={have ? "text-zinc-500 line-through dark:text-zinc-400" : ""}>
                 {ingredient.quantity && `${ingredient.quantity} `}
                 {ingredient.unit && `${ingredient.unit} `}
                 {ingredient.item.name}
-                {ingredient.note && <span className="text-zinc-400"> ({ingredient.note})</span>}
+                {ingredient.note && (
+                  <span className="text-zinc-500 dark:text-zinc-400"> ({ingredient.note})</span>
+                )}
               </span>
             </li>
           );
@@ -117,7 +119,7 @@ export default function RecipeDetail({
 
       {recipe.instructions && (
         <>
-          <h2 className="mt-6 text-sm font-medium uppercase tracking-wide text-zinc-400">
+          <h2 className="mt-6 text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
             Instructions
           </h2>
           <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">
