@@ -1,9 +1,10 @@
 import { getPantry } from "@/lib/db/pantry";
+import { getRestrictions } from "@/lib/db/dietary-restrictions";
 import PantryList from "@/components/pantry-list";
 
 export const dynamic = "force-dynamic";
 
 export default async function PantryPage() {
-  const items = await getPantry();
-  return <PantryList initialItems={items} />;
+  const [items, restrictions] = await Promise.all([getPantry(), getRestrictions()]);
+  return <PantryList initialItems={items} restrictions={restrictions} />;
 }

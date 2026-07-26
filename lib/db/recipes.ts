@@ -114,6 +114,7 @@ async function replaceIngredients(recipeId: string, input: RecipeInput) {
     quantity: ingredient.quantity,
     unit: ingredient.unit,
     note: ingredient.note,
+    substitute_note: ingredient.substitute_note,
     sort_order: index,
   }));
 

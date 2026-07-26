@@ -22,6 +22,7 @@ export interface RecipeIngredient {
   quantity: number | null;
   unit: string | null;
   note: string | null;
+  substitute_note: string | null;
   sort_order: number;
 }
 
@@ -38,6 +39,7 @@ export interface RecipeIngredientInput {
   quantity: number | null;
   unit: string | null;
   note: string | null;
+  substitute_note: string | null;
 }
 
 export interface RecipeInput {

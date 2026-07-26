@@ -24,6 +24,7 @@ export async function addGroceryItemByName(
 export async function addGroceryItemByItemId(
   itemId: string,
   unit: string | null = null,
+  incrementBy?: number,
 ): Promise<GroceryListEntryWithItem> {
   const { data: existing, error: findError } = await supabase
     .from("grocery_list")
@@ -33,7 +34,18 @@ export async function addGroceryItemByItemId(
     .maybeSingle();
 
   if (findError) throw new Error(findError.message);
-  if (existing) return existing as unknown as GroceryListEntryWithItem;
+
+  if (existing) {
+    if (!incrementBy) return existing as unknown as GroceryListEntryWithItem;
+    const { data, error } = await supabase
+      .from("grocery_list")
+      .update({ quantity: existing.quantity + incrementBy })
+      .eq("id", existing.id)
+      .select("*, item:items(*)")
+      .single();
+    if (error) throw new Error(error.message);
+    return data as unknown as GroceryListEntryWithItem;
+  }
 
   const { data, error } = await supabase
     .from("grocery_list")

@@ -3,6 +3,7 @@ export interface Item {
   name: string;
   default_unit: string | null;
   category: string | null;
+  dietary_tags: string[];
   is_staple: boolean;
   created_at: string;
 }

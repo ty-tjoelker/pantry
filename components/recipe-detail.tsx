@@ -8,17 +8,23 @@ import {
   deleteRecipe,
   markCooked,
 } from "@/lib/db/recipes";
+import type { DietaryRestriction } from "@/types/dietary-restriction";
 import type { RecipeWithIngredients } from "@/types/recipe";
 
 export default function RecipeDetail({
   recipe,
   haveItemIds,
+  restrictions,
 }: {
   recipe: RecipeWithIngredients;
   haveItemIds: string[];
+  restrictions: DietaryRestriction[];
 }) {
   const router = useRouter();
   const haveSet = new Set(haveItemIds);
+  const excludedTags = new Set(
+    restrictions.filter((r) => r.mode === "exclude").map((r) => r.tag),
+  );
   const [adding, setAdding] = useState(false);
   const [cooking, setCooking] = useState(false);
   const [confirmCook, setConfirmCook] = useState(false);
@@ -92,17 +98,34 @@ export default function RecipeDetail({
       <ul className="mt-2 divide-y divide-zinc-200 dark:divide-zinc-800">
         {recipe.ingredients.map((ingredient) => {
           const have = haveSet.has(ingredient.item_id);
+          const conflictingTags = ingredient.item.dietary_tags.filter((t) => excludedTags.has(t));
+          const hasConflict = conflictingTags.length > 0;
           return (
-            <li key={ingredient.id} className="flex items-center gap-2 py-2 text-sm">
-              <span className={`h-2 w-2 shrink-0 rounded-full ${have ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-700"}`} />
-              <span className={have ? "text-zinc-500 line-through dark:text-zinc-400" : ""}>
-                {ingredient.quantity && `${ingredient.quantity} `}
-                {ingredient.unit && `${ingredient.unit} `}
-                {ingredient.item.name}
-                {ingredient.note && (
-                  <span className="text-zinc-500 dark:text-zinc-400"> ({ingredient.note})</span>
-                )}
-              </span>
+            <li key={ingredient.id} className="py-2 text-sm">
+              <div className="flex items-center gap-2">
+                <span className={`h-2 w-2 shrink-0 rounded-full ${have ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-700"}`} />
+                <span className={have ? "text-zinc-500 line-through dark:text-zinc-400" : ""}>
+                  {ingredient.quantity && `${ingredient.quantity} `}
+                  {ingredient.unit && `${ingredient.unit} `}
+                  {ingredient.item.name}
+                  {ingredient.note && (
+                    <span className="text-zinc-500 dark:text-zinc-400"> ({ingredient.note})</span>
+                  )}
+                </span>
+              </div>
+              {hasConflict && (
+                <p className="ml-4 mt-0.5 text-xs">
+                  {ingredient.substitute_note ? (
+                    <span className="text-emerald-600">
+                      Swap: {ingredient.substitute_note}
+                    </span>
+                  ) : (
+                    <span className="text-amber-600 dark:text-amber-400">
+                      Contains {conflictingTags.map((t) => t.replace(/_/g, " ")).join(", ")}
+                    </span>
+                  )}
+                </p>
+              )}
             </li>
           );
         })}

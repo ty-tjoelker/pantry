@@ -26,6 +26,8 @@ export default function PasteRecipe({ onParsed }: { onParsed: (draft: RecipeDraf
         quantity: i.quantity,
         unit: i.unit,
         note: i.note,
+        substituteNote: null,
+        itemDietaryTags: [],
       })),
     });
     setOpen(false);

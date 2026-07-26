@@ -22,7 +22,7 @@ export default function BottomNav() {
             <Link
               key={tab.href}
               href={tab.href}
-              className={`flex-1 py-3 text-center text-sm font-medium ${
+              className={`flex-1 py-4 text-center text-sm font-medium ${
                 active ? "text-emerald-600" : "text-zinc-500 dark:text-zinc-400"
               }`}
             >

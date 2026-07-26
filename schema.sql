@@ -100,3 +100,34 @@ create index meal_plan_date_idx on meal_plan (date);
 alter table meal_plan enable row level security;
 
 create policy "anon full access" on meal_plan for all to anon using (true) with check (true);
+
+-- Pantry — Phase 6 schema
+-- Run this once in the Supabase SQL editor (SQL Editor > New query > paste > Run).
+
+alter table items add column dietary_tags text[] not null default '{}';
+alter table recipe_ingredients add column substitute_note text;
+
+create table dietary_restrictions (
+  id uuid primary key default gen_random_uuid(),
+  tag text not null unique,
+  mode text not null check (mode in ('exclude', 'limit')),
+  created_at timestamptz not null default now()
+);
+
+create index dietary_restrictions_tag_idx on dietary_restrictions (tag);
+
+alter table dietary_restrictions enable row level security;
+
+create policy "anon full access" on dietary_restrictions for all to anon using (true) with check (true);
+
+-- Seeded from the household's stated restrictions. "exclude" = never suggested and
+-- flagged everywhere; "limit" = allowed but scored down in suggestions with a note.
+insert into dietary_restrictions (tag, mode) values
+  ('gluten', 'exclude'),
+  ('dairy', 'exclude'),
+  ('peanut', 'exclude'),
+  ('shrimp', 'exclude'),
+  ('chicken', 'exclude'),
+  ('black_beans', 'exclude'),
+  ('pinto_beans', 'exclude'),
+  ('cinnamon', 'limit');

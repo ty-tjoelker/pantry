@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getRecipe } from "@/lib/db/recipes";
+import { getRestrictions } from "@/lib/db/dietary-restrictions";
 import RecipeForm, { type RecipeDraft } from "@/components/recipe-form";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +19,8 @@ export default async function EditRecipePage({
     notFound();
   }
 
+  const restrictions = await getRestrictions();
+
   const draft: RecipeDraft = {
     title: recipe.title,
     description: recipe.description ?? "",
@@ -34,8 +37,10 @@ export default async function EditRecipePage({
       quantity: i.quantity,
       unit: i.unit,
       note: i.note,
+      substituteNote: i.substitute_note,
+      itemDietaryTags: i.item.dietary_tags,
     })),
   };
 
-  return <RecipeForm recipeId={recipe.id} initial={draft} />;
+  return <RecipeForm recipeId={recipe.id} initial={draft} restrictions={restrictions} />;
 }

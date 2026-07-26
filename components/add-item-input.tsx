@@ -42,15 +42,20 @@ export default function AddItemInput({
 
   return (
     <div className="relative">
-      <input
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") submit();
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit();
         }}
-        placeholder="Add an item..."
-        className="w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-base outline-none focus:border-emerald-600 dark:border-zinc-700"
-      />
+      >
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          enterKeyHint="done"
+          placeholder="Add an item..."
+          className="w-full rounded-xl border border-zinc-300 bg-transparent px-4 py-3 text-base outline-none focus:border-emerald-600 dark:border-zinc-700"
+        />
+      </form>
       {suggestions.length > 0 && (
         <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl border border-zinc-300 bg-[var(--background)] shadow-lg dark:border-zinc-700">
           {suggestions.map((item) => (

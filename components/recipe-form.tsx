@@ -6,6 +6,7 @@ import AddItemInput from "./add-item-input";
 import IngredientRow, { type DraftIngredient } from "./ingredient-row";
 import { findOrCreateItem } from "@/lib/db/items";
 import { createRecipe, updateRecipe } from "@/lib/db/recipes";
+import type { DietaryRestriction } from "@/types/dietary-restriction";
 import type { RecipeInput } from "@/types/recipe";
 import type { Item } from "@/types/item";
 
@@ -36,9 +37,11 @@ export const emptyDraft: RecipeDraft = {
 export default function RecipeForm({
   recipeId,
   initial,
+  restrictions,
 }: {
   recipeId?: string;
   initial: RecipeDraft;
+  restrictions: DietaryRestriction[];
 }) {
   const router = useRouter();
   const [draft, setDraft] = useState(initial);
@@ -53,7 +56,16 @@ export default function RecipeForm({
     patch({
       ingredients: [
         ...draft.ingredients,
-        { tempId: crypto.randomUUID(), itemId: null, name, quantity: 1, unit: null, note: null },
+        {
+          tempId: crypto.randomUUID(),
+          itemId: null,
+          name,
+          quantity: 1,
+          unit: null,
+          note: null,
+          substituteNote: null,
+          itemDietaryTags: [],
+        },
       ],
     });
   }
@@ -69,6 +81,8 @@ export default function RecipeForm({
           quantity: 1,
           unit: item.default_unit,
           note: null,
+          substituteNote: null,
+          itemDietaryTags: item.dietary_tags,
         },
       ],
     });
@@ -99,6 +113,7 @@ export default function RecipeForm({
           quantity: i.quantity,
           unit: i.unit,
           note: i.note,
+          substitute_note: i.substituteNote,
         })),
       );
 
@@ -186,6 +201,7 @@ export default function RecipeForm({
             <IngredientRow
               key={ingredient.tempId}
               ingredient={ingredient}
+              restrictions={restrictions}
               onChange={(fields) => updateIngredient(ingredient.tempId, fields)}
               onRemove={() => removeIngredient(ingredient.tempId)}
             />

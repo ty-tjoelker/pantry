@@ -46,17 +46,24 @@ export default function MealSlotEditor({
 
   return (
     <div className="rounded-xl border border-emerald-600 bg-[var(--background)] p-2">
-      <input
-        autoFocus
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") saveNoteAndClose();
-          if (e.key === "Escape") onClose();
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          saveNoteAndClose();
         }}
-        placeholder="Recipe or note..."
-        className="w-full rounded-lg border border-zinc-300 bg-transparent px-2 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-zinc-700"
-      />
+      >
+        <input
+          autoFocus
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") onClose();
+          }}
+          enterKeyHint="done"
+          placeholder="Recipe or note..."
+          className="w-full rounded-lg border border-zinc-300 bg-transparent px-2 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-zinc-700"
+        />
+      </form>
       {suggestions.length > 0 && (
         <ul className="mt-1 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
           {suggestions.map((recipe) => (
