@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import RecipeCard from "./recipe-card";
+import SurpriseMe from "./surprise-me";
 import type { Recipe } from "@/types/recipe";
 
 export default function RecipeList({ recipes }: { recipes: Recipe[] }) {
@@ -39,6 +40,10 @@ export default function RecipeList({ recipes }: { recipes: Recipe[] }) {
         >
           +
         </Link>
+      </div>
+
+      <div className="mt-3">
+        <SurpriseMe />
       </div>
 
       {tags.length > 0 && (

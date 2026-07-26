@@ -34,6 +34,28 @@ export async function searchRecipes(query: string): Promise<Recipe[]> {
   return data as Recipe[];
 }
 
+export async function getAllRecipesWithIngredients(): Promise<RecipeWithIngredients[]> {
+  const { data: recipes, error: recipesError } = await supabase.from("recipes").select("*");
+  if (recipesError) throw new Error(recipesError.message);
+
+  const { data: ingredients, error: ingredientsError } = await supabase
+    .from("recipe_ingredients")
+    .select("*, item:items(*)")
+    .order("sort_order", { ascending: true });
+  if (ingredientsError) throw new Error(ingredientsError.message);
+
+  const byRecipe = new Map<string, RecipeIngredientWithItem[]>();
+  for (const ingredient of ingredients as unknown as RecipeIngredientWithItem[]) {
+    if (!byRecipe.has(ingredient.recipe_id)) byRecipe.set(ingredient.recipe_id, []);
+    byRecipe.get(ingredient.recipe_id)!.push(ingredient);
+  }
+
+  return (recipes as Recipe[]).map((recipe) => ({
+    ...recipe,
+    ingredients: byRecipe.get(recipe.id) ?? [],
+  }));
+}
+
 export async function getRecipe(id: string): Promise<RecipeWithIngredients> {
   const { data: recipe, error: recipeError } = await supabase
     .from("recipes")

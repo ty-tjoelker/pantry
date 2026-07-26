@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { searchRecipes } from "@/lib/db/recipes";
+import { getSuggestedRecipes } from "@/lib/db/suggestions";
+import type { ScoredRecipe } from "@/lib/suggest-recipes";
 import type { Recipe } from "@/types/recipe";
 
 export default function MealSlotEditor({
@@ -19,7 +21,14 @@ export default function MealSlotEditor({
 }) {
   const [value, setValue] = useState(initialNote);
   const [suggestions, setSuggestions] = useState<Recipe[]>([]);
+  const [suggested, setSuggested] = useState<ScoredRecipe[]>([]);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    getSuggestedRecipes()
+      .then((scored) => setSuggested(scored.slice(0, 3)))
+      .catch(() => setSuggested([]));
+  }, []);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -46,6 +55,29 @@ export default function MealSlotEditor({
 
   return (
     <div className="rounded-xl border border-emerald-600 bg-[var(--background)] p-2">
+      {!value.trim() && suggested.length > 0 && (
+        <div className="mb-1.5">
+          <p className="px-1 pb-1 text-[10px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+            Suggested for you
+          </p>
+          <ul className="overflow-hidden rounded-lg border border-emerald-200 dark:border-emerald-900">
+            {suggested.map(({ recipe, note }) => (
+              <li key={recipe.id}>
+                <button
+                  type="button"
+                  onClick={() => pick(recipe)}
+                  className="block w-full px-2 py-1.5 text-left text-sm active:bg-zinc-100 dark:active:bg-zinc-800"
+                >
+                  <span>{recipe.title}</span>
+                  {note && (
+                    <span className="block text-xs text-zinc-500 dark:text-zinc-400">{note}</span>
+                  )}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <form
         onSubmit={(e) => {
           e.preventDefault();

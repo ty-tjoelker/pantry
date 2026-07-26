@@ -2,7 +2,7 @@ import { supabase } from "./client";
 import { getRecipe } from "./recipes";
 import { getPantry } from "./pantry";
 import { getStapleItems } from "./items";
-import { addDays } from "../dates";
+import { addDays, toISODate } from "../dates";
 import { buildGroceryPreview, type GroceryPreviewRow } from "../meal-plan-grocery";
 import type { MealPlanEntryWithRecipe, Meal } from "@/types/meal-plan";
 import type { RecipeWithIngredients } from "@/types/recipe";
@@ -40,6 +40,24 @@ export async function setMealPlanNote(date: string, meal: Meal, note: string): P
 export async function clearMealPlanSlot(date: string, meal: Meal): Promise<void> {
   const { error } = await supabase.from("meal_plan").delete().eq("date", date).eq("meal", meal);
   if (error) throw new Error(error.message);
+}
+
+/** Tags from recipes planned/cooked in the last `days` days — used to score suggestions for variety. */
+export async function getRecentMealTags(days = 14): Promise<string[]> {
+  const end = toISODate(new Date());
+  const start = addDays(end, -days);
+
+  const { data, error } = await supabase
+    .from("meal_plan")
+    .select("recipe:recipes(tags)")
+    .gte("date", start)
+    .lte("date", end)
+    .not("recipe_id", "is", null);
+
+  if (error) throw new Error(error.message);
+  return ((data ?? []) as unknown as { recipe: { tags: string[] } | null }[]).flatMap(
+    (row) => row.recipe?.tags ?? [],
+  );
 }
 
 export async function getGroceryPreviewForWeek(weekStart: string): Promise<GroceryPreviewRow[]> {
