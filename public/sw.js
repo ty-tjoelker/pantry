@@ -1,7 +1,7 @@
 // Runtime cache only — no precache list, so it doesn't need to know Next.js's
 // hashed build filenames. It just remembers pages/assets as you actually visit
 // them, then serves that copy back if the network request fails.
-const CACHE_NAME = "pantry-runtime-v1";
+const CACHE_NAME = "pantry-runtime-v2";
 
 self.addEventListener("install", () => {
   self.skipWaiting();

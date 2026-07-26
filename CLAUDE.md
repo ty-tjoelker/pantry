@@ -238,6 +238,18 @@ file. It's the memory that carries between sessions.
     - Pantry items had no way to be removed at all, ever. `PantryRow` now wraps in the same
       `SwipeToDelete` component grocery rows already use, plus `deleteFromPantry()` in
       `lib/db/pantry.ts`. Still gesture-only, same known a11y gap as the grocery list.
+    - `viewport-fit: cover` also meant the page now draws under the status bar/notch at the
+      *top*, which nothing was accounting for — content visibly jumped up. Fixed with
+      `pt-[env(safe-area-inset-top)]` on `<body>` in `app/layout.tsx`.
+    - Ty saw the bottom nav render "fat" on List/Recipes but correctly-sized on Pantry/Plan
+      — confirmed he was using the installed home-screen icon (standalone mode, no Safari
+      chrome to blame), and `BottomNav` is one shared instance in `(app)/layout.tsx` with
+      zero route-dependent styling, so it can't legitimately differ by page. Leading theory:
+      the hand-rolled service worker (`public/sw.js`) caching each route's HTML/CSS
+      independently, so some pages were still serving a pre-fix snapshot. Bumped
+      `CACHE_NAME` to force every route onto the same fresh version — revisit if the
+      inconsistency persists after that propagates, since it'd point at something other
+      than caching.
   - **Phase 7 (deferred, not built):** AI-generated recipe suggestions and an AI fallback
     for recipe-URL pages without structured data. Needs Ty to set up a separate Anthropic
     developer account (console.anthropic.com, its own billing — distinct from Claude Pro)
