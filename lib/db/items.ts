@@ -60,3 +60,19 @@ export async function updateItemDietaryTags(itemId: string, tags: string[]): Pro
   const { error } = await supabase.from("items").update({ dietary_tags: tags }).eq("id", itemId);
   if (error) throw new Error(error.message);
 }
+
+export async function updateItemCategory(itemId: string, category: string | null): Promise<void> {
+  const { error } = await supabase.from("items").update({ category }).eq("id", itemId);
+  if (error) throw new Error(error.message);
+}
+
+/** Every distinct category currently in use, so the category editor can suggest existing
+ * ones — typing anything else just creates a new category, since it's a plain text column. */
+export async function getDistinctCategories(): Promise<string[]> {
+  const { data, error } = await supabase.from("items").select("category").not("category", "is", null);
+  if (error) throw new Error(error.message);
+  const set = new Set(
+    (data as { category: string }[]).map((row) => row.category.trim()).filter(Boolean),
+  );
+  return [...set].sort((a, b) => a.localeCompare(b));
+}

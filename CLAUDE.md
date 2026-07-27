@@ -277,6 +277,34 @@ file. It's the memory that carries between sessions.
     - Pantry now sub-groups by category within each location (`pantry-list.tsx`), matching
       the grouping the grocery list already had — was previously one flat list per location,
       which is how the missing categories went unnoticed for so long.
+  - **Collapsible/editable/custom categories, third pass:** Ty asked for the category
+    groups to collapse, for a way to move an item into a different category, and for the
+    ability to type a category that doesn't exist yet.
+    - `pantry-list.tsx` tracks a `collapsedGroups` Set; each category heading is now a
+      button with a chevron that toggles membership. Collapsed is per-group (keyed
+      `location:category`), not global, so e.g. Freezer can stay open while Pantry is
+      collapsed.
+    - Category is now manually editable, same inline-expand pattern as the existing
+      dietary-tag chips (pencil icon on `pantry-row.tsx` → expands to show an `<input
+      list="pantry-category-options">` alongside the tag chips). `<input list>` +
+      `<datalist>` was picked over a custom dropdown specifically so it doubles as
+      "pick an existing category" and "type a brand-new one" with zero extra UI — typing
+      anything not in the list just creates it, since `items.category` is already a plain
+      text column (no schema change). `lib/db/items.ts` gained `updateItemCategory` and
+      `getDistinctCategories` (the latter feeds the datalist's options from the live
+      table, and the pantry screen also unions in any category typed during the current
+      session so it's immediately offered again without a refetch).
+    - Changing a category moves the row to a different group in the same render pass,
+      which means it unmounts/remounts (different parent container) — so the edit panel
+      closes automatically after a category change instead of staying open on a row
+      that's now elsewhere on the page. Read as expected behavior, not a bug: the item is
+      easy to find under its new heading.
+    - Verified live: expand/collapse a group, change an existing item's category via the
+      input and confirmed (via direct Supabase query) it persisted and the item moved to
+      the correct existing group; typed a category that didn't exist yet, confirmed it
+      created a new group immediately, persisted, and was offered as a suggestion on
+      subsequent edits — then reverted both test items back to their original categories
+      through the same UI. `npm run build` and `npm run lint` clean.
   - **Phase 7 (deferred, not built):** AI-generated recipe suggestions and an AI fallback
     for recipe-URL pages without structured data. Needs Ty to set up a separate Anthropic
     developer account (console.anthropic.com, its own billing — distinct from Claude Pro)
