@@ -31,7 +31,7 @@ export default function DietaryRestrictionsList({
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto px-4 pb-8 pt-4">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-8 pt-4">
       <h1 className="text-lg font-semibold">Dietary restrictions</h1>
       <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
         &quot;Exclude&quot; ingredients are never suggested unless a recipe notes a

@@ -25,7 +25,7 @@ export default function RecipeList({ recipes }: { recipes: Recipe[] }) {
   }, [recipes, query, activeTag]);
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex items-center gap-2 px-4 pt-4">
         <input
           value={query}
@@ -78,7 +78,7 @@ export default function RecipeList({ recipes }: { recipes: Recipe[] }) {
         </div>
       )}
 
-      <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
         {filtered.length === 0 && (
           <p className="mt-8 text-center text-zinc-500 dark:text-zinc-400">
             {recipes.length === 0 ? "No recipes yet." : "Nothing matches."}

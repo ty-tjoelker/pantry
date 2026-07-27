@@ -6,7 +6,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <ToastProvider>
       <OfflineBanner />
-      <main className="flex flex-1 flex-col pb-[calc(4rem+env(safe-area-inset-bottom))]">{children}</main>
+      <main className="flex min-h-0 flex-1 flex-col pb-[calc(4rem+env(safe-area-inset-bottom))]">{children}</main>
       <BottomNav />
     </ToastProvider>
   );

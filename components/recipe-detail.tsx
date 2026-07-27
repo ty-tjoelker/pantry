@@ -58,7 +58,7 @@ export default function RecipeDetail({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 pb-8 pt-4">
+    <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-8 pt-4">
       <div className="flex items-start justify-between gap-3">
         <h1 className="text-xl font-semibold">{recipe.title}</h1>
         <Link

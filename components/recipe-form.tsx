@@ -142,7 +142,7 @@ export default function RecipeForm({
   }
 
   return (
-    <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+    <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4">
       <input
         value={draft.title}
         onChange={(e) => patch({ title: e.target.value })}

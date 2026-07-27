@@ -44,7 +44,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col pt-[env(safe-area-inset-top)]">
+      <body className="h-full flex flex-col overflow-hidden pt-[env(safe-area-inset-top)]">
         <RegisterServiceWorker />
         {children}
       </body>

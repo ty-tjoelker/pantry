@@ -20,7 +20,7 @@ export default function NewRecipeClient({
   }
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <ImportRecipe onParsed={handleParsed} />
       <PasteRecipe onParsed={handleParsed} />
       <RecipeForm key={version} initial={draft} restrictions={restrictions} />

@@ -141,7 +141,7 @@ export default function GroceryList({
   }
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex items-center justify-end px-4 pt-4">
         <Link
           href="/settings"
@@ -160,7 +160,7 @@ export default function GroceryList({
       <div className="px-4">
         <AddItemInput onAddByName={handleAddByName} onAddItem={handleAddItem} />
       </div>
-      <div className="flex-1 overflow-y-auto pb-6">
+      <div className="min-h-0 flex-1 overflow-y-auto pb-6">
         {grouped.length === 0 && checked.length === 0 && (
           <p className="mt-12 text-center text-zinc-500 dark:text-zinc-400">Your list is empty.</p>
         )}

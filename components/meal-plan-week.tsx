@@ -72,7 +72,7 @@ export default function MealPlanWeek({
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto px-4 pb-24 pt-4">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-24 pt-4">
       <div className="flex items-center justify-between">
         <button
           type="button"

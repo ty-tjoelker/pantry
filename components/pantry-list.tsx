@@ -29,10 +29,17 @@ export default function PantryList({
 
   const sections = useMemo(
     () =>
-      LOCATIONS.map((loc) => ({
-        ...loc,
-        items: entries.filter((e) => e.location === loc.key),
-      })),
+      LOCATIONS.map((loc) => {
+        const locationItems = entries.filter((e) => e.location === loc.key);
+        const groups = new Map<string, PantryEntryWithItem[]>();
+        for (const entry of locationItems) {
+          const key = entry.item.category?.trim() || "Other";
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key)!.push(entry);
+        }
+        const categories = [...groups.entries()].sort(([a], [b]) => a.localeCompare(b));
+        return { ...loc, categories, count: locationItems.length };
+      }),
     [entries],
   );
 
@@ -104,33 +111,38 @@ export default function PantryList({
   }
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <div className="px-4 pt-4">
         <AddItemInput onAddByName={handleAddByName} onAddItem={handleAddItem} />
       </div>
-      <div className="flex-1 overflow-y-auto pb-6">
+      <div className="min-h-0 flex-1 overflow-y-auto pb-6">
         {entries.length === 0 && (
           <p className="mt-12 text-center text-zinc-500 dark:text-zinc-400">Your pantry is empty.</p>
         )}
         {sections.map((section) =>
-          section.items.length === 0 ? null : (
+          section.count === 0 ? null : (
             <div key={section.key} className="mt-4">
-              <h2 className="px-4 pb-1 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                {section.label}
-              </h2>
-              <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                {section.items.map((entry) => (
-                  <PantryRow
-                    key={entry.id}
-                    entry={entry}
-                    restrictions={restrictions}
-                    onAdjust={(delta) => handleAdjust(entry, delta)}
-                    onAddToGroceryList={() => handleAddToGroceryList(entry)}
-                    onToggleDietaryTag={(tag) => handleToggleDietaryTag(entry, tag)}
-                    onDelete={() => handleDelete(entry)}
-                  />
-                ))}
-              </div>
+              <h2 className="px-4 pb-1 text-sm font-semibold">{section.label}</h2>
+              {section.categories.map(([category, items]) => (
+                <div key={category} className="mt-2">
+                  <h3 className="px-4 pb-1 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                    {category}
+                  </h3>
+                  <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
+                    {items.map((entry) => (
+                      <PantryRow
+                        key={entry.id}
+                        entry={entry}
+                        restrictions={restrictions}
+                        onAdjust={(delta) => handleAdjust(entry, delta)}
+                        onAddToGroceryList={() => handleAddToGroceryList(entry)}
+                        onToggleDietaryTag={(tag) => handleToggleDietaryTag(entry, tag)}
+                        onDelete={() => handleDelete(entry)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           ),
         )}

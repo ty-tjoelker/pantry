@@ -241,15 +241,42 @@ file. It's the memory that carries between sessions.
     - `viewport-fit: cover` also meant the page now draws under the status bar/notch at the
       *top*, which nothing was accounting for — content visibly jumped up. Fixed with
       `pt-[env(safe-area-inset-top)]` on `<body>` in `app/layout.tsx`.
-    - Ty saw the bottom nav render "fat" on List/Recipes but correctly-sized on Pantry/Plan
-      — confirmed he was using the installed home-screen icon (standalone mode, no Safari
-      chrome to blame), and `BottomNav` is one shared instance in `(app)/layout.tsx` with
-      zero route-dependent styling, so it can't legitimately differ by page. Leading theory:
-      the hand-rolled service worker (`public/sw.js`) caching each route's HTML/CSS
-      independently, so some pages were still serving a pre-fix snapshot. Bumped
-      `CACHE_NAME` to force every route onto the same fresh version — revisit if the
-      inconsistency persists after that propagates, since it'd point at something other
-      than caching.
+    - Ty saw the bottom nav render "fat" on List/Recipes but correctly-sized on Pantry/Plan.
+      Ruled out Safari chrome (he confirmed home-screen-icon/standalone usage) and a stale
+      service-worker cache (bumping `CACHE_NAME` didn't fix it). **Actual root cause,
+      found by measuring `main`'s real `getBoundingClientRect()` in the browser**: `<body>`
+      used `min-h-full` instead of a bounded `h-full`, so on tall pages (Pantry's 40+ items,
+      Plan's full week) the whole document grew and scrolled as one block, while short pages
+      (List, Recipes) never hit that path — two genuinely different layout behaviors, not a
+      visual illusion. Layered on that: Tailwind flex children default to `min-height: auto`,
+      so nested `flex-1 overflow-y-auto` containers don't shrink to fit their parent unless
+      every level in the chain also sets `min-h-0` — a classic flexbox gotcha. Fixed by
+      making `<body>` `h-full overflow-hidden` and adding `min-h-0` down the full chain
+      (`main` in `(app)/layout.tsx`, and each page's own wrapper/scroll `div`s). Verified via
+      `getBoundingClientRect()` that all four tabs now measure identically bounded.
+  - **Grocery-store categories, second pass:** the categorization from earlier in this phase
+    turned out to have never run for most of Ty's real items — he'd been adding recipes via
+    the URL-import/paste flow while his phone was still serving a stale cached JS bundle
+    from before categorization shipped (client-side code, not just visuals, so the writes
+    themselves ran old logic and saved `category: null`). Confirmed by querying the live
+    `items` table directly: only the 3 items created during this session's own testing had
+    a category.
+    - Audited `lib/item-heuristics.ts` against Ty's real ~50-item catalog and found real
+      bugs, not just coverage gaps: plain `.includes()` substring matching meant `"tea"`
+      matched inside `"beefsteak"` (and even bare `"steak"`), `"egg"` matched inside
+      `"eggplant"`, `"rice"` matched inside `"price"`. Fixed with a word-boundary regex
+      (`\bkeyword(?:es|s)?\b` — the optional suffix keeps plurals like "tomatoes"/"onions"
+      matching). Also reordered category checks so an explicit signal wins over a coincidental
+      one (`"frozen ...fries"` → Frozen, not Produce, because Frozen is checked first) and
+      expanded keyword coverage substantially (herbs, spices, condiments, more produce).
+    - Ran a one-time backfill script (not a UI feature) against the live `items` table:
+      recomputed `category`/`dietary_tags` only for rows where they were still null/empty,
+      so nothing already set (manually or otherwise) got overwritten. Went from 3 categorized
+      items to 52; only the 2 items that are literally test junk from this session stayed
+      uncategorized. Did a dry run first and reviewed the exact diff before writing.
+    - Pantry now sub-groups by category within each location (`pantry-list.tsx`), matching
+      the grouping the grocery list already had — was previously one flat list per location,
+      which is how the missing categories went unnoticed for so long.
   - **Phase 7 (deferred, not built):** AI-generated recipe suggestions and an AI fallback
     for recipe-URL pages without structured data. Needs Ty to set up a separate Anthropic
     developer account (console.anthropic.com, its own billing — distinct from Claude Pro)
